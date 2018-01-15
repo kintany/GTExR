@@ -5,7 +5,7 @@
 \title{Plots CV2 versus mean}
 \usage{
 plot_CV2_vs_mean(df, name,
-  path_fig = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/pics/upd/",
+  path_fig = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/results/Figures/CV2_mean/",
   n_bins = 5, plotMode = "Both", modeBoxPlot = "None")
 }
 \arguments{

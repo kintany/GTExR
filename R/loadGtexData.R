@@ -86,4 +86,4 @@ save_Gtex_data_by_tissue <- function (path_to_raw_files = "/Users/svetlana/Dropb
 }
 
 # Run to save .Rda files to the default folder
-save_Gtex_data_by_tissue()
+#save_Gtex_data_by_tissue()

@@ -124,6 +124,6 @@ read_counts_and_merge_samples <- function(fullName) {
 }
 
 # To test
-fullName <-  "Kidney - Cortex"
-read_counts_and_calc_ratios(fullName)
-read_counts_and_merge_samples(fullName)
+#fullName <-  "Kidney - Cortex"
+#read_counts_and_calc_ratios(fullName)
+#read_counts_and_merge_samples(fullName)

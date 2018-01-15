@@ -5,7 +5,7 @@
 \title{Coverts GTEx data from 3 files (downloaded from GTEx website) to ExpressionSet format}
 \usage{
 
-  load_Gtex_data(path_to_files = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/raw_data")
+  load_Gtex_data(path_to_files = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data")
 }
 \arguments{
 \item{path_to_files}{Path to the input folder contatining all 3 files}

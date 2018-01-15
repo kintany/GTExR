@@ -5,8 +5,8 @@
 \title{Saves selected tissues counts to .Rda files}
 \usage{
 
-  save_Gtex_data_by_tissue(path_to_raw_files = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/raw_data",
-  path_outFolder = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/data_Rda_upd/",
+  save_Gtex_data_by_tissue(path_to_raw_files = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data",
+  path_outFolder = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/data_Rda/",
   samples_thr = 30)
 }
 \arguments{

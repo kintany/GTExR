@@ -1,13 +1,17 @@
-
-tissues <- c(
-  "Kidney - Cortex", "Heart - Left Ventricle",
-  "Liver", "Lung", "Pancreas", "Stomach", "Small Intestine - Terminal Ileum", "Spleen"
-)
-for (fullName in tissues) {
-  pl <- plot_density_ratio_per_individual(fullName)
-  cowplot::save_plot(pl, file=paste0("results/Figures/ratio_per_individual/", fullName, "_individual_ratio_density.pdf"))
+#' Plot ratio densities for all tissues
+#'
+#' @return ggplot2
+#
+plot_density_ratio_per_individual <- function() {
+  tissues <- c(
+    "Kidney - Cortex", "Heart - Left Ventricle",
+    "Liver", "Lung", "Pancreas", "Stomach", "Small Intestine - Terminal Ileum", "Spleen"
+  )
+  for (fullName in tissues) {
+    pl <- plot_density_ratio_per_individual(fullName)
+    cowplot::save_plot(pl, file=paste0("results/Figures/ratio_per_individual/", fullName, "_individual_ratio_density.pdf"))
+  }
 }
-
 #' Reads ratios from the file and makes a plot of density, colored by individual
 #'
 #' @param fullName full name of the tissue

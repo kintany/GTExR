@@ -5,8 +5,8 @@
 \title{Proccesses GTEx counts and merges counts statistics with classification data}
 \usage{
 process_to_counts(name,
-  path_to_class = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/classification/",
-  path_rda = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/data_Rda_upd/")
+  path_to_class = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/classification/",
+  path_rda = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/data_Rda/")
 }
 \arguments{
 \item{name}{Tissue name}

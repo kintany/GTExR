@@ -10,11 +10,11 @@ generatePlots <- function(name) {
 }
 
 
-tissues <- c(
-  "Kidney_Cortex", "Heart_Left_Ventricle",
-  "Liver", "Lung", "Pancreas", "Stomach", "Small_Intestine", "Spleen"
-)
-for (fullName in tissues) {
-  generatePlots(fullName)
-}
+# tissues <- c(
+#   "Kidney_Cortex", "Heart_Left_Ventricle",
+#   "Liver", "Lung", "Pancreas", "Stomach", "Small_Intestine", "Spleen"
+# )
+# for (fullName in tissues) {
+#   generatePlots(fullName)
+# }
 
