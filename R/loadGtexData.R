@@ -7,7 +7,7 @@
 #' @param path_to_files Path to the input folder contatining all 3 files
 #' @return ExpressionSet
 #' @export
-loadGtexData <- function (path_to_files)
+load_Gtex_data <- function (path_to_files = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data")
 {
   phenoFile <- paste0(path_to_files, "/GTEx_v7_Annotations_SampleAttributesDS.txt")
   pheno2File <- paste0(path_to_files, "/GTEx_v7_Annotations_SubjectPhenotypesDS.txt")
@@ -47,3 +47,43 @@ loadGtexData <- function (path_to_files)
   es <- yarn::annotateFromBiomart(obj = es, genes = genes, host = host, biomart = biomart, dataset = dataset, attributes = attributes)
   return(es)
 }
+
+#' Subsets GTEx ExpressionSet to a given tissue
+#'
+#'
+#'
+#' @param gtex_es ExpressionSet with GTEx data
+#' @param name Full tissue name to subset to
+#' @return ExpressionSet
+#' @export
+subsetGtexData <- function (gtex_es, name)
+{
+  subset_tissue <- gtex_es[, which(pData(gtex_es)[, "SMTSD"] %in% name)]
+  return(subset_tissue)
+}
+
+
+#' Saves selected tissues counts to .Rda files
+#'
+#'
+#' @param path_to_raw_files Path to raw GTEx files
+#' @param path_outFolder Path to folder to save Rda files for tissues
+#' @param number_threshold Minimum number of samples per tissue to consider the tissue
+#' @return
+#' @export
+save_Gtex_data_by_tissue <- function (path_to_raw_files = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data",
+                                  path_outFolder = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/data_Rda/",
+                                  samples_thr = 30)
+{
+  gtex_es <- load_Gtex_data()
+  tissues <- names(table(pData(gtex_es)$SMTSD)[table(pData(gtex_es)$SMTSD)>=samples_thr])
+  for (name in tissues) {
+    subset_tissue <- subsetGtexData(gtex_es, name)
+    pathSave <- paste(path_outFolder, name, sep="")
+    pathSave <- paste(pathSave, ".Rda", sep="")
+    save(subset_tissue, file=pathSave)
+  }
+}
+
+# Run to save .Rda files to the default folder
+save_Gtex_data_by_tissue()
