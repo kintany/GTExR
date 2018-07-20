@@ -2,13 +2,18 @@
 % Please edit documentation in R/runForTissue.R
 \name{generatePlots}
 \alias{generatePlots}
-\title{Generate plots for a given tissue}
+\title{Generate variatility plots for a given tissue}
 \usage{
-generatePlots(name)
+generatePlots(name, mode)
 }
 \arguments{
 \item{name}{tissue name}
+
+\item{mode}{"norm_counts" / "log" meaning using normalized by library size counts or using log(normalized_counts)}
+}
+\value{
+None
 }
 \description{
-Generate plots for a given tissue
+Generate variatility plots for a given tissue
 }

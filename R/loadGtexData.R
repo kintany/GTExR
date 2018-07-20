@@ -3,7 +3,6 @@
 #' This function loads files with GTEx subjects phenotypes, attributes and RNA-seq counts
 #' and coverts them to one ExpressionSet objects.
 #'
-#'
 #' @param path_to_files Path to the input folder contatining all 3 files
 #' @return ExpressionSet
 #' @export
@@ -68,13 +67,12 @@ subsetGtexData <- function (gtex_es, name)
 #'
 #' @param path_to_raw_files Path to raw GTEx files
 #' @param path_outFolder Path to folder to save Rda files for tissues
-#' @param number_threshold Minimum number of samples per tissue to consider the tissue
-#' @return
+#' @param samples_thr Minimum number of samples per tissue to consider the tissue
+#' @return None
 #' @export
 save_Gtex_data_by_tissue <- function (path_to_raw_files = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data",
                                   path_outFolder = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/data_Rda/",
-                                  samples_thr = 30)
-{
+                                  samples_thr = 30) {
   gtex_es <- load_Gtex_data()
   tissues <- names(table(pData(gtex_es)$SMTSD)[table(pData(gtex_es)$SMTSD)>=samples_thr])
   for (name in tissues) {
@@ -84,6 +82,3 @@ save_Gtex_data_by_tissue <- function (path_to_raw_files = "/Users/svetlana/Dropb
     save(subset_tissue, file=pathSave)
   }
 }
-
-# Run to save .Rda files to the default folder
-#save_Gtex_data_by_tissue()

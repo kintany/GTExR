@@ -2,8 +2,8 @@ Package: GTExR
 Type: Package
 Title: Package for GTEx analysis with R scripts
 Version: 0.1.0
-Author: Svetlana Vinogradova
-Maintainer: kintany@gmail.com
+Authors@R: person("Svetlana", "Vinogradova", email = "kintany@gmail.com",
+                  role = c("aut", "cre"))
 Description: This package works with publicly available data from GTEx as well as with data from dbGap
 License: MIT License
 Encoding: UTF-8

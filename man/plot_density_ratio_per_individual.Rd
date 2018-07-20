@@ -2,23 +2,18 @@
 % Please edit documentation in R/analysis_per_tissue.R
 \name{plot_density_ratio_per_individual}
 \alias{plot_density_ratio_per_individual}
-\alias{plot_density_ratio_per_individual}
-\title{Plot ratio densities for all tissues}
+\title{Reads ratios from the file and makes a plot of density, colored by individual}
 \usage{
-plot_density_ratio_per_individual(fullName)
-
-plot_density_ratio_per_individual(fullName)
+plot_density_ratio_per_individual(fullName, byStatus = FALSE)
 }
 \arguments{
 \item{fullName}{full name of the tissue}
+
+\item{byStatus}{if TRUE, make plots for MAE/BAE status}
 }
 \value{
 ggplot2
-
-ggplot2
 }
 \description{
-Plot ratio densities for all tissues
-
 Reads ratios from the file and makes a plot of density, colored by individual
 }

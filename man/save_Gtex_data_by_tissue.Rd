@@ -16,6 +16,9 @@
 
 \item{number_threshold}{Minimum number of samples per tissue to consider the tissue}
 }
+\value{
+None
+}
 \description{
 Saves selected tissues counts to .Rda files
 }

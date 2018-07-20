@@ -9,7 +9,7 @@
 #'
 get_ASE_files_list <- function(fullName) {
   # Read list with samples available
-  list <- readr::read_delim("/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data/list.txt", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
+  list <- readr::read_delim("/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data/list_upd.txt", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
   sp <- function(x) { strsplit(x, '[.]')[[1]][1] }
   list$id <- purrr::map_chr(list$X1, sp)
   colnames(list)[1] <- "file_name"
@@ -42,7 +42,7 @@ get_ASE_files_list <- function(fullName) {
 get_counts_for_sample <- function(sample_id, tissue) {
   # Open file with the ASE data for a given sample
   f_name <- paste0("/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/raw_data/phe000014.v1.GTEx_MidPoint_Imputation_ASE.expression-matrixfmt-ase.c1/", sample_id[1])
-  f_name <- paste0(f_name, ".ase_table.tsv.gz")
+  f_name <- paste0(f_name, ".phased.ase.table.tsv.gz")
   df <- readr::read_delim(f_name, "\t", escape_double = FALSE, trim_ws = TRUE)
   # Subset to the tissue of interest
   df <- df %>% filter(TISSUE_ID == tissue) %>% filter(LOW_MAPABILITY ==0 & MAPPING_BIAS_SIM == 0 & GENOTYPE_WARNING ==0)
@@ -66,6 +66,7 @@ get_counts_for_sample <- function(sample_id, tissue) {
 #' Aggregates reads counts from SNPs to transcript and calculates ratios
 #'
 #' @param df dataframe with count in columns 2 and 3
+#' @export
 #' @return dataframe
 #
 aggregate_counts <- function(df, threshold = 10) {
@@ -80,6 +81,7 @@ aggregate_counts <- function(df, threshold = 10) {
 #' Reads counts for a given tissue, aggregates them and puts together ratios for all samples
 #'
 #' @param fullName full tissue name
+#' @export
 #' @return dataframe
 #
 read_counts_and_calc_ratios <- function(fullName) {
@@ -93,8 +95,8 @@ read_counts_and_calc_ratios <- function(fullName) {
   df_agg <- df_agg[,c(1,4)]
   for (i in 2:dim(ids_tissue)[1]) {
     tmp <- get_counts_for_sample(ids_tissue[i,], tissue_code)
-    tmp <- aggregate_counts(tmp)
-    if (!is.null(tpm)) df_agg <- merge(df_agg, tmp[,c(1,4)], by.x="GENE_ID", by.y="GENE_ID", all.x = TRUE, all.y = TRUE)
+    if (!is.null(tmp)) tmp <- aggregate_counts(tmp)
+    if (!is.null(tmp)) df_agg <- merge(df_agg, tmp[,c(1,4)], by.x="GENE_ID", by.y="GENE_ID", all.x = TRUE, all.y = TRUE)
   }
   return(df_agg)
 }
@@ -102,6 +104,7 @@ read_counts_and_calc_ratios <- function(fullName) {
 #' Reads counts for a given tissue, aggregates them and puts together counts for all samples
 #'
 #' @param fullName full tissue name
+#' @export
 #' @return dataframe
 #
 read_counts_and_merge_samples <- function(fullName) {
@@ -114,16 +117,151 @@ read_counts_and_merge_samples <- function(fullName) {
   # Read and aggregate the data
   for (i in 1:dim(ids_tissue)[1]) {
     tmp <- get_counts_for_sample(ids_tissue[i,], tissue_code)
-    tmp <- aggregate_counts(tmp)
-    tmp <- tmp[,c(1:3)]
-    colnames(tmp)[2:3] <- c("ref_count", "alt_count")
-    tmp$sample_id <- ids_tissue$SAMPID[i]
-    if (!is.null(tpm)) df_agg <- rbind(df_agg, tmp)
+    if (!is.null(tmp))  {
+      tmp <- aggregate_counts(tmp)
+      tmp <- tmp[,c(1:3)]
+      colnames(tmp)[2:3] <- c("ref_count", "alt_count")
+      tmp$sample_id <- ids_tissue$SAMPID[i]
+      if (!is.null(tmp)) df_agg <- rbind(df_agg, tmp)
+    }
   }
   return(df_agg)
 }
 
-# To test
-#fullName <-  "Kidney - Cortex"
-#read_counts_and_calc_ratios(fullName)
-#read_counts_and_merge_samples(fullName)
+#' Reads ratios from the file, subsamples and makes a plot
+#'
+#' @export
+#' @return None
+#
+get_samples_tissues <- function() {
+  tissues <- c(
+    "Kidney - Cortex", "Heart - Left Ventricle",
+    "Liver", "Lung", "Pancreas", "Stomach", "Small Intestine - Terminal Ileum", "Spleen"
+  )
+  ratios_all <- data.frame(GENE_ID = character(), ratio = numeric(), tissue = character())
+  for (fullName in tissues) {
+    ratios_all <- rbind(ratios_all, get_ratios_sample(fullName))
+  }
+  ggplot(ratios_all, aes(x = ratio, col = tissue)) +
+    geom_density() +
+    theme_bw()
+}
+
+#' Saves counts to files for the tissues of interest
+#'
+#' @export
+#' @return None
+#
+save_counts_tissues_of_interest <- function() {
+  tissues <- c(
+    "Kidney - Cortex", "Heart - Left Ventricle",
+    "Liver", "Lung", "Pancreas", "Stomach", "Small Intestine - Terminal Ileum", "Spleen"
+  )
+  for (fullName in tissues) {
+    save_counts(fullName)
+  }
+}
+
+#' Saves ratios to files for the tissues of interest
+#'
+#' @export
+#' @return  None
+#
+save_ratios_tissues_of_interest <- function() {
+  tissues <- c(
+    "Kidney - Cortex", "Heart - Left Ventricle",
+    "Liver", "Lung", "Pancreas", "Stomach", "Small Intestine - Terminal Ileum", "Spleen"
+  )
+  for (fullName in tissues) {
+    save_ratios(fullName)
+  }
+}
+
+#' Gets ratios for a given tissue
+#'
+#' @param fullName full tissue name
+#' @param n_samples number of rows to get
+#' @export
+#' @return dataframe
+#
+get_ratios_sample <- function(fullName, n_samples = 10000) {
+  df <- read_ratios(fullName)
+  df_melt <- reshape2::melt(df)
+  colnames(df_melt)[3] <- "ratio"
+  df_melt <- df_melt[!is.na(df_melt$ratio), ]
+  df_melt_sample <- dplyr::sample_n(df_melt, n_samples) %>%
+    mutate(tissue = fullName) %>%
+    dplyr::select(GENE_ID, ratio, tissue)
+  return(df_melt_sample)
+}
+
+#' Reads and saves ratios for a given tissue
+#'
+#' @param fullName full tissue name
+#' @param path path to save the tissues' ratios
+#' @export
+#' @return None
+#
+save_ratios <- function(fullName, path = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/processed_data/tissue_AI_ratios_upd/") {
+  df <- read_counts_and_calc_ratios(fullName)
+  file_path <- paste0(path, fullName)
+  file_path <- paste0(file_path, "_ratios.txt")
+  write.table(df, file = file_path, sep = "\t", row.names = F, quote = F)
+}
+
+#' Reads ratios for a given tissue
+#'
+#' @param fullName full tissue name
+#' @param coverage coverage threshold
+#' @param path path with the tissues' ratios
+#' @export
+#' @return None
+#
+read_ratios <- function(fullName, coverage = 0, path = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/processed_data/tissue_AI_ratios_upd/") {
+  file_path <- paste0(path, fullName)
+  file_path <- paste0(file_path, "_ratios.txt")
+  df <- read_delim(file_path, delim = "\t")
+  if (coverage >0) {
+    df <- read_delim(paste0("data/processed_data/tissue_AI_counts_upd/",fullName, "_counts.txt"), delim = "\t")
+    sp <- function(x) {
+      x <- paste0("ratio_", x)
+      x <- gsub("-", ".", x)
+    }
+    df$sample_id <- purrr::map_chr(df$sample_id, sp)
+    df <- df %>% filter(ref_count + alt_count > coverage) %>%
+      mutate(ratio = ref_count / (ref_count + alt_count)) %>%
+      dplyr::select(GENE_ID, ratio, sample_id)
+    df <- df %>% tidyr::spread(sample_id, ratio)
+  }
+  return(df)
+}
+
+#' Reads and saves counts for a given tissue
+#'
+#' @param fullName full tissue name
+#' @param path path to save the tissues' ratios
+#' @export
+#' @return None
+#
+save_counts <- function(fullName, path = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/processed_data/tissue_AI_counts_upd/") {
+  df <- read_counts_and_merge_samples(fullName)
+  file_path <- paste0(path, fullName)
+  file_path <- paste0(file_path, "_counts.txt")
+  write.table(df, file = file_path, sep = "\t", row.names = F, quote = F)
+}
+
+#' Reads counts for a given tissue
+#'
+#' @param fullName full tissue name
+#' @param coverage Minimum number of counts per gene
+#' @param path path with the tissues' ratios
+#' @export
+#' @return None
+#
+read_counts <- function(fullName, coverage = 0, path = "/Users/svetlana/Dropbox (Partners HealthCare)/variation_project/GTEx/GTExR/data/processed_data/tissue_AI_counts_upd/") {
+  file_path <- paste0(path, fullName)
+  file_path <- paste0(file_path, "_counts.txt")
+  df <- read_delim(file_path, delim = "\t")
+  df <- df %>% filter(ref_count + alt_count > coverage)
+  return(df)
+}
